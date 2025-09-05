@@ -13,7 +13,7 @@ namespace Gino
             List<Task> commandes = new List<Task>();
             double montantTotal = 0;
             Random rand = new Random();
-            int nbClients = rand.Next(5, 100);
+            int nbClients = rand.Next(5, 10);
             int choix;
 
             //Création des ingrédients de base
@@ -99,13 +99,20 @@ namespace Gino
 
             Console.WriteLine("\n-----------------------Sans Gluten-------------------------\n");
 
-            var gluten = (from prod in nourritures
+            /*var gluten = (from prod in nourritures
                           from ingr in prod.Ingredients
                           where ingr.SansGluten == false
                           select prod).Distinct();
 
             var sansGluten = from nour in nourritures
                              where !(from g in gluten select g).Contains(nour)
+                             select nour;*/
+
+            var sansGluten = from nour in nourritures
+                             where !((from prod in nourritures
+                                      from ingr in prod.Ingredients
+                                      where ingr.SansGluten == false
+                                      select prod).Distinct()).Contains(nour)
                              select nour;
 
             foreach (var i in sansGluten)
@@ -113,13 +120,20 @@ namespace Gino
 
             Console.WriteLine("\n------------------------Vegan------------------------\n");
 
-            var notVegan = (from nour in nourritures
+            /*var notVegan = (from nour in nourritures
                             from ingr in nour.Ingredients
                             where ingr.Vegan == false
                             select nour).Distinct();
 
             var vegan = from nour in nourritures
                         where !(from v in notVegan select v).Contains(nour)
+                        select nour;*/
+
+            var vegan = from nour in nourritures
+                        where !((from n in nourritures
+                                 from ingr in n.Ingredients
+                                 where ingr.Vegan == false
+                                 select n).Distinct()).Contains(nour)
                         select nour;
 
             foreach (var i in vegan)
@@ -148,12 +162,12 @@ namespace Gino
 
             //avec select many
 
-            var boissonCafeine2 = (from prod in boissons
+            var boissonCafeine = (from prod in boissons
                                   from ingr in prod.Ingredients
                                   where ingr.ContientCafeine == true
                                   select prod).Distinct();
 
-            foreach (var i in boissonCafeine2)
+            foreach (var i in boissonCafeine)
                 Console.WriteLine(i);
 
             Console.WriteLine("\n---------------------Boissons Chaudes---------------------------\n");
